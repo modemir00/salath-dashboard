@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Namaadhu Vaguthuthah — Prayer Times</title>
+    <title>Namaadhu Vaguthu — Prayer Times</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -326,7 +326,7 @@
         <div class="logo-block">
             <div class="mosque-icon">🕌</div>
             <div class="title-group">
-                <h1>Namaadhu Vaguthuthah</h1>
+                <h1>Namaadhu Vaguthu</h1>
                 <p>Prayer Times · Malé, Kaafu Atoll</p>
             </div>
         </div>
@@ -359,7 +359,7 @@
 
     <!-- FOOTER -->
     <footer>
-        <p class="footer-text">Prayer times are for reference only · Please verify with your local mosque</p>
+        <p class="footer-text">Prayer times are for male' and male' nearby islands·</p>
     </footer>
 
 </div>
@@ -398,7 +398,7 @@ const ayahs = [
 
 // ── HELPERS ──
 function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
-function nowMin() { const n = new Date(); return n.getHours()*60+n.getMinutes(); }
+function nowMin() { const n = getServerNow(); return n.getHours()*60+n.getMinutes(); }
 
 const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -479,8 +479,27 @@ function updateCurrentHighlight() {
 }
 
 // ── CLOCK + BANNER ──
+let serverOffset = 0;
+async function syncServerTime() {
+    try {
+        const res = await fetch('https://time.now/developer/api/timezone/Indian/Maldives');
+        const data = await res.json();
+
+        const serverTime = new Date(data.datetime).getTime();
+        const deviceTime = Date.now();
+
+        serverOffset = serverTime - deviceTime;
+    } catch (err) {
+        console.error("Time API failed.");
+    }
+}
+
+function getServerNow() {
+    return new Date(Date.now() + serverOffset);
+}
+
 function updateClock() {
-    const now = new Date();
+    const now = getServerNow();
     const hh  = String(now.getHours()).padStart(2,'0');
     const mm  = String(now.getMinutes()).padStart(2,'0');
     const ss  = String(now.getSeconds()).padStart(2,'0');
@@ -522,12 +541,19 @@ function showAyah(idx) {
 }
 
 // ── INIT ──
-buildCards();
-tick();
-showAyah(0);
+async function init() {
+    await syncServerTime();   // sync first
+    buildCards();
+    tick();
+    showAyah(0);
 
-setInterval(tick, 1000);
-setInterval(() => showAyah(++ayahIdx), 30000);
+    setInterval(tick, 1000);
+
+    // Re-sync every 5 minutes to prevent drift
+    setInterval(syncServerTime, 300000);
+}
+
+init();
 </script>
 </body>
 </html>
