@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namaadhu Vaguthuthah — Prayer Times</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-deep:    #03082e;
+            --royal-mid:     #0a1a5c;
+            --royal-bright:  #1a3aad;
+            --royal-glow:    #2855d4;
+            --gold:          #c9a84c;
+            --gold-light:    #f0d080;
+            --gold-pale:     #faeec8;
+            --gold-dim:      #7a5e1a;
+            --text-primary:  #f5edcd;
+            --text-muted:    #a09060;
+            --card-bg:       rgba(10, 26, 92, 0.55);
+            --card-border:   rgba(201, 168, 76, 0.25);
+            --card-glow:     rgba(40, 85, 212, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--royal-deep);
+            color: var(--text-primary);
+        }
+
+        /* ── BACKGROUND LAYERS ── */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(26, 58, 173, 0.6) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 10% 80%,  rgba(201, 168, 76, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 90% 90%,  rgba(26, 58, 173, 0.2) 0%, transparent 60%),
+                linear-gradient(170deg, #04102f 0%, #06143a 40%, #030920 100%);
+        }
+
+        /* Star field */
+        .stars {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            animation: twinkle var(--dur, 4s) ease-in-out infinite;
+            animation-delay: var(--del, 0s);
+            opacity: 0;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: var(--op, 0.6); }
+        }
+
+        /* Geometric ornament lines */
+        .ornament-top {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+        }
+        .ornament-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .app {
+            position: relative;
+            z-index: 1;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            grid-template-areas:
+                "header"
+                "main"
+                "footer";
+            padding: 2vh 3vw;
+            gap: 1.5vh;
+        }
+
+        /* ── HEADER ── */
+        header {
+            grid-area: header;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.5vw;
+        }
+
+        .logo-block {
+            display: flex;
+            align-items: center;
+            gap: 1.2vw;
+        }
+
+        .mosque-icon {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            filter: drop-shadow(0 0 16px rgba(201, 168, 76, 0.7));
+            animation: iconFloat 6s ease-in-out infinite;
+        }
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .title-group h1 {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: clamp(1.4rem, 2.8vw, 2.4rem);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.04em;
+            line-height: 1.1;
+        }
+
+        .title-group p {
+            font-size: clamp(0.7rem, 1.1vw, 1rem);
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 0.2em;
+        }
+
+        /* Header right: live clock */
+        .live-clock {
+            text-align: right;
+        }
+        .clock-time {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 3.5vw, 3.2rem);
+            font-weight: 600;
+            color: var(--gold-light);
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(240, 208, 128, 0.4);
+        }
+        .clock-date {
+            font-size: clamp(0.65rem, 1vw, 0.9rem);
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            margin-top: 0.3em;
+        }
+        .clock-day {
+            font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+            color: var(--gold-dim);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Header divider */
+        .header-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--card-border), var(--gold-dim), var(--card-border), transparent);
+            margin-top: 1vh;
+        }
+
+        /* ── NEXT PRAYER BANNER ── */
+        .next-prayer-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5vw;
+            padding: 0.8vh 2vw;
+            background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.08), rgba(201, 168, 76, 0.12), rgba(201, 168, 76, 0.08), transparent);
+            border-top: 1px solid rgba(201, 168, 76, 0.15);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        .next-prayer-label {
+            font-size: clamp(0.6rem, 0.9vw, 0.85rem);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .next-prayer-name {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(0.9rem, 1.6vw, 1.4rem);
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        .next-prayer-countdown {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+            color: var(--gold);
+            letter-spacing: 0.05em;
+        }
+
+        .dot-sep {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--gold-dim);
+            display: inline-block;
+        }
+
+        /* ── PRAYER GRID (main area) ── */
+        main {
+            grid-area: main;
+            display: flex;
+            align-items: stretch;
+            gap: 1.5vw;
+        }
+
+        .prayer-grid {
+            display: flex;
+            gap: 1.5vw;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .prayer-card {
+            flex: 1;
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6vh;
+            padding: 2vh 1vw;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            animation: cardAppear 0.6s ease both;
+        }
+
+        .prayer-card:nth-child(1) { animation-delay: 0.05s; }
+        .prayer-card:nth-child(2) { animation-delay: 0.10s; }
+        .prayer-card:nth-child(3) { animation-delay: 0.15s; }
+        .prayer-card:nth-child(4) { animation-delay: 0.20s; }
+        .prayer-card:nth-child(5) { animation-delay: 0.25s; }
+        .prayer-card:nth-child(6) { animation-delay: 0.30s; }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card shimmer line at top */
+        .prayer-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .prayer-card:hover::before { opacity: 1; }
+
+        /* Card background glow */
+        .prayer-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 100%, rgba(40, 85, 212, 0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* CURRENT STATE */
+        .prayer-card.current {
+            background: linear-gradient(160deg, rgba(201, 168, 76, 0.12), rgba(26, 58, 173, 0.4));
+            border-color: rgba(201, 168, 76, 0.6);
+            box-shadow:
+                0 0 30px rgba(201, 168, 76, 0.15),
+                0 0 60px rgba(40, 85, 212, 0.2),
+                inset 0 0 30px rgba(201, 168, 76, 0.05);
+            transform: translateY(-4px);
+        }
+        .prayer-card.current::before {
+            opacity: 1;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            height: 3px;
+        }
+
+        /* SUNRISE — subtler, italic */
+        .prayer-card.sunrise-card {
+            opacity: 0.7;
+        }
+        .prayer-card.sunrise-card .prayer-icon,
+        .prayer-card.sunrise-card .prayer-name,
+        .prayer-card.sunrise-card .prayer-time {
+            opacity: 0.75;
+        }
+
+        .prayer-icon {
+            font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+            filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.4));
+            margin-bottom: 0.4vh;
+        }
+
+        .prayer-name {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(0.75rem, 1.3vw, 1.15rem);
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .prayer-card.current .prayer-name {
+            color: var(--gold-light);
+        }
+
+        .prayer-time {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.6rem, 3vw, 2.8rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+            text-shadow: 0 2px 20px rgba(245, 237, 205, 0.2);
+            line-height: 1;
+        }
+
+        .prayer-card.current .prayer-time {
+            color: var(--gold-light);
+            text-shadow: 0 0 20px rgba(240, 208, 128, 0.5);
+        }
+
+        .current-badge {
+            margin-top: 0.8vh;
+            padding: 0.3em 0.9em;
+            background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
+            border-radius: 99px;
+            font-size: clamp(0.5rem, 0.75vw, 0.68rem);
+            font-weight: 700;
+            color: var(--royal-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(201, 168, 76, 0.4); }
+            50%       { box-shadow: 0 0 20px rgba(201, 168, 76, 0.8); }
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            grid-area: footer;
+            text-align: center;
+        }
+        .footer-text {
+            font-size: clamp(0.55rem, 0.8vw, 0.75rem);
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            opacity: 0.6;
+        }
+
+        /* ── HIJRI / GREGORIAN DATE ── */
+        .date-sub {
+            font-size: clamp(0.55rem, 0.8vw, 0.75rem);
+            color: var(--gold-dim);
+            letter-spacing: 0.1em;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg">
+    <div class="bg-gradient"></div>
+    <div class="stars" id="stars"></div>
+    <div class="ornament-top"></div>
+    <div class="ornament-bottom"></div>
+</div>
+
+<!-- App Shell -->
+<div class="app">
+
+    <!-- HEADER -->
+    <div>
+        <header>
+            <div class="logo-block">
+                <div class="mosque-icon">🕌</div>
+                <div class="title-group">
+                    <h1>Namaadhu Vaguthuthah</h1>
+                    <p>Prayer Times · Malé, Kaafu Atoll</p>
+                </div>
+            </div>
+            <div class="live-clock">
+                <div class="clock-time" id="clock-time">--:--:--</div>
+                <div class="clock-date" id="clock-date">Loading…</div>
+                <div class="clock-day"  id="clock-day"></div>
+            </div>
+        </header>
+        <div class="header-divider"></div>
+
+        <!-- Next Prayer Banner -->
+        <div class="next-prayer-banner">
+            <span class="next-prayer-label">Next Prayer</span>
+            <span class="dot-sep"></span>
+            <span class="next-prayer-name" id="next-name">—</span>
+            <span class="next-prayer-countdown" id="next-countdown"></span>
+        </div>
+    </div>
+
+    <!-- PRAYER CARDS -->
+    <main>
+        <div class="prayer-grid" id="prayer-grid"></div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p class="footer-text">Prayer times are for reference only · Please verify with your local mosque</p>
+    </footer>
+
+</div>
+
+<script>
+// ── DATA ──
+const prayerData = [
+    { name: "Fajr",    time: "05:05", icon: "🌙" },
+    { name: "Sunrise", time: "06:17", icon: "🌅" },
+    { name: "Dhuhr",   time: "12:23", icon: "☀️"  },
+    { name: "Asr",     time: "15:38", icon: "🌤️"  },
+    { name: "Maghrib", time: "18:22", icon: "🌆"  },
+    { name: "Isha",    time: "19:34", icon: "🌃"  }
+];
+
+// ── STAR FIELD ──
+(function generateStars() {
+    const container = document.getElementById('stars');
+    const count = 80;
+    for (let i = 0; i < count; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random() * 2.5 + 0.5;
+        s.style.cssText = `
+            width:${size}px; height:${size}px;
+            left:${Math.random()*100}%;
+            top:${Math.random()*100}%;
+            --dur:${3+Math.random()*5}s;
+            --del:${Math.random()*6}s;
+            --op:${0.3+Math.random()*0.7};
+        `;
+        container.appendChild(s);
+    }
+})();
+
+// ── HELPERS ──
+function timeToMinutes(t) {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+}
+
+function nowMinutes() {
+    const n = new Date();
+    return n.getHours() * 60 + n.getMinutes();
+}
+
+function formatCountdown(diffMin) {
+    const h = Math.floor(diffMin / 60);
+    const m = diffMin % 60;
+    if (h > 0) return `in ${h}h ${m}m`;
+    return `in ${m}m`;
+}
+
+function getCurrentPrayer() {
+    const cm = nowMinutes();
+    // Skip Sunrise as a "current prayer"
+    const salats = prayerData.filter(p => p.name !== 'Sunrise');
+    let cur = null;
+    for (let i = 0; i < salats.length; i++) {
+        const pm = timeToMinutes(salats[i].time);
+        const nm = i < salats.length - 1 ? timeToMinutes(salats[i+1].time) : 24*60;
+        if (cm >= pm && cm < nm) { cur = salats[i].name; break; }
+    }
+    if (!cur && cm < timeToMinutes(salats[0].time)) cur = salats[salats.length-1].name;
+    return cur;
+}
+
+function getNextPrayer() {
+    const cm = nowMinutes();
+    const salats = prayerData.filter(p => p.name !== 'Sunrise');
+    for (const p of salats) {
+        const pm = timeToMinutes(p.time);
+        if (pm > cm) return { prayer: p, diffMin: pm - cm };
+    }
+    // After Isha: next is tomorrow Fajr
+    const fajrMin = timeToMinutes(salats[0].time);
+    return { prayer: salats[0], diffMin: 24*60 - cm + fajrMin };
+}
+
+// ── RENDER CARDS ──
+function renderCards() {
+    const grid = document.getElementById('prayer-grid');
+    const current = getCurrentPrayer();
+    grid.innerHTML = '';
+    prayerData.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'prayer-card' +
+            (p.name === current ? ' current' : '') +
+            (p.name === 'Sunrise' ? ' sunrise-card' : '');
+
+        card.innerHTML = `
+            <div class="prayer-icon">${p.icon}</div>
+            <div class="prayer-name">${p.name}</div>
+            <div class="prayer-time">${p.time}</div>
+            ${p.name === current ? '<div class="current-badge">Now</div>' : ''}
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// ── LIVE CLOCK ──
+function updateClock() {
+    const now = new Date();
+    const timeEl = document.getElementById('clock-time');
+    const dateEl = document.getElementById('clock-date');
+    const dayEl  = document.getElementById('clock-day');
+
+    // Time
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const ss = String(now.getSeconds()).padStart(2,'0');
+    timeEl.textContent = `${hh}:${mm}:${ss}`;
+
+    // Date
+    const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    dateEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    dayEl.textContent  = now.getDay() === 5 ? '✦ Jumu\'ah Mubarak ✦' : '';
+}
+
+// ── NEXT PRAYER ──
+function updateNextPrayer() {
+    const { prayer, diffMin } = getNextPrayer();
+    document.getElementById('next-name').textContent      = prayer.name;
+    document.getElementById('next-countdown').textContent = formatCountdown(diffMin);
+}
+
+// ── TICK ──
+function tick() {
+    updateClock();
+    updateNextPrayer();
+    //renderCards(); // re-render to update current badge
+}
+
+// ── INIT ──
+renderCards();
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
