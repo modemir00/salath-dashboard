@@ -22,6 +22,7 @@
             --card-bg:       rgba(10, 26, 92, 0.55);
             --card-border:   rgba(201, 168, 76, 0.25);
             --card-glow:     rgba(40, 85, 212, 0.25);
+            --radius:        12px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,96 +39,65 @@
             color: var(--text-primary);
         }
 
-        /* ── BACKGROUND LAYERS ── */
-        .bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-        }
+        /* ── BACKGROUND ── */
+        .bg { position: fixed; inset: 0; z-index: 0; }
 
         .bg-gradient {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             background:
-                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(26, 58, 173, 0.6) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 40% at 10% 80%,  rgba(201, 168, 76, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 90% 90%,  rgba(26, 58, 173, 0.2) 0%, transparent 60%),
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(26,58,173,0.6) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 10% 80%,  rgba(201,168,76,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 90% 90%,  rgba(26,58,173,0.2) 0%, transparent 60%),
                 linear-gradient(170deg, #04102f 0%, #06143a 40%, #030920 100%);
         }
 
-        /* Star field */
-        .stars {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-        }
+        .stars { position: absolute; inset: 0; overflow: hidden; }
         .star {
-            position: absolute;
-            border-radius: 50%;
-            background: white;
+            position: absolute; border-radius: 50%; background: white; opacity: 0;
             animation: twinkle var(--dur, 4s) ease-in-out infinite;
             animation-delay: var(--del, 0s);
-            opacity: 0;
         }
         @keyframes twinkle {
             0%, 100% { opacity: 0; }
             50% { opacity: var(--op, 0.6); }
         }
 
-        /* Geometric ornament lines */
-        .ornament-top {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 2px;
+        .ornament-top, .ornament-bottom {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            width: 80%; height: 2px;
             background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
         }
-        .ornament-bottom {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
-        }
+        .ornament-top { top: 0; }
+        .ornament-bottom { bottom: 0; }
 
         /* ── MAIN LAYOUT ── */
         .app {
-            position: relative;
-            z-index: 1;
-            width: 100vw;
-            height: 100vh;
+            position: relative; z-index: 1;
+            width: 100vw; height: 100vh;
             display: grid;
-            grid-template-rows: auto 1fr auto;
+            grid-template-rows: auto auto 1fr auto auto;
             grid-template-areas:
                 "header"
+                "banner"
                 "main"
+                "ayah"
                 "footer";
             padding: 2vh 3vw;
-            gap: 1.5vh;
+            gap: 1.2vh;
         }
 
         /* ── HEADER ── */
         header {
             grid-area: header;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 0 0.5vw;
         }
 
-        .logo-block {
-            display: flex;
-            align-items: center;
-            gap: 1.2vw;
-        }
+        .logo-block { display: flex; align-items: center; gap: 1.2vw; }
 
         .mosque-icon {
             font-size: clamp(2rem, 4vw, 3.5rem);
-            filter: drop-shadow(0 0 16px rgba(201, 168, 76, 0.7));
+            filter: drop-shadow(0 0 16px rgba(201,168,76,0.7));
             animation: iconFloat 6s ease-in-out infinite;
         }
         @keyframes iconFloat {
@@ -140,170 +110,97 @@
             font-weight: 700;
             font-size: clamp(1.4rem, 2.8vw, 2.4rem);
             background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.04em;
-            line-height: 1.1;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: 0.04em; line-height: 1.1;
         }
-
         .title-group p {
             font-size: clamp(0.7rem, 1.1vw, 1rem);
-            color: var(--text-muted);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-top: 0.2em;
+            color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 0.2em;
         }
 
-        /* Header right: live clock */
-        .live-clock {
-            text-align: right;
-        }
+        .live-clock { text-align: right; }
         .clock-time {
             font-family: 'Cinzel', serif;
             font-size: clamp(1.8rem, 3.5vw, 3.2rem);
-            font-weight: 600;
-            color: var(--gold-light);
-            line-height: 1;
-            text-shadow: 0 0 30px rgba(240, 208, 128, 0.4);
+            font-weight: 600; color: var(--gold-light); line-height: 1;
+            text-shadow: 0 0 30px rgba(240,208,128,0.4);
         }
         .clock-date {
             font-size: clamp(0.65rem, 1vw, 0.9rem);
-            color: var(--text-muted);
-            letter-spacing: 0.08em;
-            margin-top: 0.3em;
+            color: var(--text-muted); letter-spacing: 0.08em; margin-top: 0.3em;
         }
         .clock-day {
             font-size: clamp(0.6rem, 0.9vw, 0.85rem);
-            color: var(--gold-dim);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        /* Header divider */
-        .header-divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--card-border), var(--gold-dim), var(--card-border), transparent);
-            margin-top: 1vh;
+            color: var(--gold-dim); letter-spacing: 0.1em; text-transform: uppercase;
         }
 
         /* ── NEXT PRAYER BANNER ── */
         .next-prayer-banner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5vw;
-            padding: 0.8vh 2vw;
-            background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.08), rgba(201, 168, 76, 0.12), rgba(201, 168, 76, 0.08), transparent);
-            border-top: 1px solid rgba(201, 168, 76, 0.15);
-            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            grid-area: banner;
+            display: flex; align-items: center; justify-content: center; gap: 1.5vw;
+            padding: 0.7vh 2vw;
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.08), rgba(201,168,76,0.12), rgba(201,168,76,0.08), transparent);
+            border-top: 1px solid rgba(201,168,76,0.15);
+            border-bottom: 1px solid rgba(201,168,76,0.15);
         }
-
         .next-prayer-label {
             font-size: clamp(0.6rem, 0.9vw, 0.85rem);
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em;
         }
-
         .next-prayer-name {
             font-family: 'Cinzel', serif;
             font-size: clamp(0.9rem, 1.6vw, 1.4rem);
-            color: var(--gold-light);
-            font-weight: 600;
+            color: var(--gold-light); font-weight: 600;
         }
-
         .next-prayer-countdown {
             font-family: 'Cinzel', serif;
             font-size: clamp(0.9rem, 1.4vw, 1.2rem);
-            color: var(--gold);
-            letter-spacing: 0.05em;
+            color: var(--gold); letter-spacing: 0.05em;
         }
-
         .dot-sep {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--gold-dim);
-            display: inline-block;
+            width: 4px; height: 4px; border-radius: 50%;
+            background: var(--gold-dim); display: inline-block;
         }
 
-        /* ── PRAYER GRID (main area) ── */
+        /* ── PRAYER GRID ── */
         main {
             grid-area: main;
-            display: flex;
-            align-items: stretch;
-            gap: 1.5vw;
+            display: flex; align-items: stretch; gap: 1.5vw;
         }
 
         .prayer-grid {
-            display: flex;
-            gap: 1.5vw;
-            width: 100%;
-            align-items: stretch;
+            display: flex; gap: 1.5vw; width: 100%; align-items: stretch;
         }
 
         .prayer-card {
-            flex: 1;
-            position: relative;
+            flex: 1; position: relative;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             backdrop-filter: blur(12px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6vh;
-            padding: 2vh 1vw;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            animation: cardAppear 0.6s ease both;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.6vh; padding: 2vh 1vw; overflow: hidden;
+            /* Only transition properties that don't cause re-layout */
+            transition: box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
         }
 
-        .prayer-card:nth-child(1) { animation-delay: 0.05s; }
-        .prayer-card:nth-child(2) { animation-delay: 0.10s; }
-        .prayer-card:nth-child(3) { animation-delay: 0.15s; }
-        .prayer-card:nth-child(4) { animation-delay: 0.20s; }
-        .prayer-card:nth-child(5) { animation-delay: 0.25s; }
-        .prayer-card:nth-child(6) { animation-delay: 0.30s; }
-
-        @keyframes cardAppear {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Card shimmer line at top */
         .prayer-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
             background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
+            opacity: 0; transition: opacity 0.3s;
         }
         .prayer-card:hover::before { opacity: 1; }
 
-        /* Card background glow */
         .prayer-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 100%, rgba(40, 85, 212, 0.15), transparent 70%);
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 100%, rgba(40,85,212,0.15), transparent 70%);
             pointer-events: none;
         }
 
-        /* CURRENT STATE */
         .prayer-card.current {
-            background: linear-gradient(160deg, rgba(201, 168, 76, 0.12), rgba(26, 58, 173, 0.4));
-            border-color: rgba(201, 168, 76, 0.6);
-            box-shadow:
-                0 0 30px rgba(201, 168, 76, 0.15),
-                0 0 60px rgba(40, 85, 212, 0.2),
-                inset 0 0 30px rgba(201, 168, 76, 0.05);
-            transform: translateY(-4px);
+            background: linear-gradient(160deg, rgba(201,168,76,0.12), rgba(26,58,173,0.4));
+            border-color: rgba(201,168,76,0.6);
+            box-shadow: 0 0 30px rgba(201,168,76,0.15), 0 0 60px rgba(40,85,212,0.2), inset 0 0 30px rgba(201,168,76,0.05);
         }
         .prayer-card.current::before {
             opacity: 1;
@@ -311,48 +208,46 @@
             height: 3px;
         }
 
-        /* SUNRISE — subtler, italic */
-        .prayer-card.sunrise-card {
-            opacity: 0.7;
-        }
+        .prayer-card.sunrise-card { opacity: 0.7; }
         .prayer-card.sunrise-card .prayer-icon,
         .prayer-card.sunrise-card .prayer-name,
-        .prayer-card.sunrise-card .prayer-time {
-            opacity: 0.75;
+        .prayer-card.sunrise-card .prayer-time { opacity: 0.75; }
+
+        /* Initial load animation — applied via class, removed after */
+        .prayer-card.animate-in {
+            animation: cardAppear 0.6s ease both;
+        }
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .prayer-icon {
             font-size: clamp(1.4rem, 2.5vw, 2.2rem);
-            filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.4));
+            filter: drop-shadow(0 0 8px rgba(201,168,76,0.4));
             margin-bottom: 0.4vh;
         }
-
         .prayer-name {
             font-family: 'Cinzel', serif;
             font-size: clamp(0.75rem, 1.3vw, 1.15rem);
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
+            font-weight: 600; color: var(--text-muted);
+            letter-spacing: 0.08em; text-transform: uppercase;
+            transition: color 0.4s ease;
         }
-
-        .prayer-card.current .prayer-name {
-            color: var(--gold-light);
-        }
+        .prayer-card.current .prayer-name { color: var(--gold-light); }
 
         .prayer-time {
             font-family: 'Cinzel', serif;
             font-size: clamp(1.6rem, 3vw, 2.8rem);
-            font-weight: 700;
-            color: var(--text-primary);
+            font-weight: 700; color: var(--text-primary);
             letter-spacing: -0.01em;
-            text-shadow: 0 2px 20px rgba(245, 237, 205, 0.2);
+            text-shadow: 0 2px 20px rgba(245,237,205,0.2);
             line-height: 1;
+            transition: color 0.4s ease;
         }
-
         .prayer-card.current .prayer-time {
             color: var(--gold-light);
-            text-shadow: 0 0 20px rgba(240, 208, 128, 0.5);
+            text-shadow: 0 0 20px rgba(240,208,128,0.5);
         }
 
         .current-badge {
@@ -361,42 +256,62 @@
             background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
             border-radius: 99px;
             font-size: clamp(0.5rem, 0.75vw, 0.68rem);
-            font-weight: 700;
-            color: var(--royal-deep);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
+            font-weight: 700; color: var(--royal-deep);
+            text-transform: uppercase; letter-spacing: 0.15em;
             animation: badgePulse 2s ease-in-out infinite;
         }
-
         @keyframes badgePulse {
-            0%, 100% { box-shadow: 0 0 8px rgba(201, 168, 76, 0.4); }
-            50%       { box-shadow: 0 0 20px rgba(201, 168, 76, 0.8); }
+            0%, 100% { box-shadow: 0 0 8px rgba(201,168,76,0.4); }
+            50%       { box-shadow: 0 0 20px rgba(201,168,76,0.8); }
         }
+
+        /* ── QURAN AYAH ── */
+        .ayah-section {
+            grid-area: ayah;
+            background: rgba(10, 26, 92, 0.5);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: var(--radius);
+            padding: 1.2vh 2vw;
+            text-align: center;
+            position: relative;
+        }
+        .ayah-section::before {
+            content: ''; position: absolute;
+            top: 0; left: 8%; right: 8%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .ayah-arabic {
+            font-size: clamp(0.95rem, 1.6vw, 1.4rem);
+            color: var(--gold-light); line-height: 2;
+            direction: rtl; font-weight: 500;
+            text-shadow: 0 0 12px rgba(201,168,76,0.25);
+            transition: opacity 0.7s ease;
+        }
+        .ayah-translation {
+            font-size: clamp(0.6rem, 0.9vw, 0.82rem);
+            color: var(--text-muted); font-style: italic; line-height: 1.5;
+            margin-top: 0.3em; transition: opacity 0.7s ease;
+        }
+        .ayah-ref {
+            font-size: clamp(0.5rem, 0.72vw, 0.66rem);
+            color: var(--gold); margin-top: 0.3em;
+            letter-spacing: 0.05em; transition: opacity 0.7s ease;
+        }
+        .ayah-arabic, .ayah-translation, .ayah-ref { opacity: 0; }
+        .ayah-arabic.vis, .ayah-translation.vis, .ayah-ref.vis { opacity: 1; }
 
         /* ── FOOTER ── */
         footer {
-            grid-area: footer;
-            text-align: center;
+            grid-area: footer; text-align: center;
         }
         .footer-text {
             font-size: clamp(0.55rem, 0.8vw, 0.75rem);
-            color: var(--text-muted);
-            letter-spacing: 0.08em;
-            opacity: 0.6;
+            color: var(--text-muted); letter-spacing: 0.08em; opacity: 0.6;
         }
-
-        /* ── HIJRI / GREGORIAN DATE ── */
-        .date-sub {
-            font-size: clamp(0.55rem, 0.8vw, 0.75rem);
-            color: var(--gold-dim);
-            letter-spacing: 0.1em;
-        }
-
     </style>
 </head>
 <body>
 
-<!-- Background -->
 <div class="bg">
     <div class="bg-gradient"></div>
     <div class="stars" id="stars"></div>
@@ -404,40 +319,43 @@
     <div class="ornament-bottom"></div>
 </div>
 
-<!-- App Shell -->
 <div class="app">
 
     <!-- HEADER -->
-    <div>
-        <header>
-            <div class="logo-block">
-                <div class="mosque-icon">🕌</div>
-                <div class="title-group">
-                    <h1>Namaadhu Vaguthuthah</h1>
-                    <p>Prayer Times · Malé, Kaafu Atoll</p>
-                </div>
+    <header>
+        <div class="logo-block">
+            <div class="mosque-icon">🕌</div>
+            <div class="title-group">
+                <h1>Namaadhu Vaguthuthah</h1>
+                <p>Prayer Times · Malé, Kaafu Atoll</p>
             </div>
-            <div class="live-clock">
-                <div class="clock-time" id="clock-time">--:--:--</div>
-                <div class="clock-date" id="clock-date">Loading…</div>
-                <div class="clock-day"  id="clock-day"></div>
-            </div>
-        </header>
-        <div class="header-divider"></div>
-
-        <!-- Next Prayer Banner -->
-        <div class="next-prayer-banner">
-            <span class="next-prayer-label">Next Prayer</span>
-            <span class="dot-sep"></span>
-            <span class="next-prayer-name" id="next-name">—</span>
-            <span class="next-prayer-countdown" id="next-countdown"></span>
         </div>
+        <div class="live-clock">
+            <div class="clock-time" id="clock-time">--:--:--</div>
+            <div class="clock-date" id="clock-date">Loading…</div>
+            <div class="clock-day"  id="clock-day"></div>
+        </div>
+    </header>
+
+    <!-- NEXT PRAYER BANNER -->
+    <div class="next-prayer-banner">
+        <span class="next-prayer-label">Next Prayer</span>
+        <span class="dot-sep"></span>
+        <span class="next-prayer-name" id="next-name">—</span>
+        <span class="next-prayer-countdown" id="next-countdown"></span>
     </div>
 
     <!-- PRAYER CARDS -->
     <main>
         <div class="prayer-grid" id="prayer-grid"></div>
     </main>
+
+    <!-- QURAN AYAH — below the grid -->
+    <div class="ayah-section">
+        <div class="ayah-arabic"      id="ayah-arabic"></div>
+        <div class="ayah-translation" id="ayah-translation"></div>
+        <div class="ayah-ref"         id="ayah-ref"></div>
+    </div>
 
     <!-- FOOTER -->
     <footer>
@@ -447,7 +365,7 @@
 </div>
 
 <script>
-// ── DATA ──
+// ── PRAYER DATA ──
 const prayerData = [
     { name: "Fajr",    time: "05:05", icon: "🌙" },
     { name: "Sunrise", time: "06:17", icon: "🌅" },
@@ -457,130 +375,159 @@ const prayerData = [
     { name: "Isha",    time: "19:34", icon: "🌃"  }
 ];
 
+// ── AYAH DATA ──
+const ayahs = [
+    {
+        arabic: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا",
+        translation: "Indeed, prayer has been decreed upon the believers a decree of specified times.",
+        ref: "Surah An-Nisa 4:103"
+    }
+];
+
 // ── STAR FIELD ──
-(function generateStars() {
+(function() {
     const container = document.getElementById('stars');
-    const count = 80;
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < 80; i++) {
         const s = document.createElement('div');
         s.className = 'star';
         const size = Math.random() * 2.5 + 0.5;
-        s.style.cssText = `
-            width:${size}px; height:${size}px;
-            left:${Math.random()*100}%;
-            top:${Math.random()*100}%;
-            --dur:${3+Math.random()*5}s;
-            --del:${Math.random()*6}s;
-            --op:${0.3+Math.random()*0.7};
-        `;
+        s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${3+Math.random()*5}s;--del:${Math.random()*6}s;--op:${0.3+Math.random()*0.7};`;
         container.appendChild(s);
     }
 })();
 
 // ── HELPERS ──
-function timeToMinutes(t) {
-    const [h, m] = t.split(':').map(Number);
-    return h * 60 + m;
-}
+function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
+function nowMin() { const n = new Date(); return n.getHours()*60+n.getMinutes(); }
 
-function nowMinutes() {
-    const n = new Date();
-    return n.getHours() * 60 + n.getMinutes();
-}
-
-function formatCountdown(diffMin) {
-    const h = Math.floor(diffMin / 60);
-    const m = diffMin % 60;
-    if (h > 0) return `in ${h}h ${m}m`;
-    return `in ${m}m`;
-}
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function getCurrentPrayer() {
-    const cm = nowMinutes();
-    // Skip Sunrise as a "current prayer"
+    const cm = nowMin();
     const salats = prayerData.filter(p => p.name !== 'Sunrise');
-    let cur = null;
     for (let i = 0; i < salats.length; i++) {
-        const pm = timeToMinutes(salats[i].time);
-        const nm = i < salats.length - 1 ? timeToMinutes(salats[i+1].time) : 24*60;
-        if (cm >= pm && cm < nm) { cur = salats[i].name; break; }
+        const pm = toMin(salats[i].time);
+        const nm = i < salats.length - 1 ? toMin(salats[i+1].time) : 24*60;
+        if (cm >= pm && cm < nm) return salats[i].name;
     }
-    if (!cur && cm < timeToMinutes(salats[0].time)) cur = salats[salats.length-1].name;
-    return cur;
+    // Before Fajr — still Isha from yesterday
+    if (cm < toMin(salats[0].time)) return salats[salats.length-1].name;
+    return null;
 }
 
 function getNextPrayer() {
-    const cm = nowMinutes();
+    const cm = nowMin();
     const salats = prayerData.filter(p => p.name !== 'Sunrise');
     for (const p of salats) {
-        const pm = timeToMinutes(p.time);
-        if (pm > cm) return { prayer: p, diffMin: pm - cm };
+        if (toMin(p.time) > cm) return { name: p.name, diff: toMin(p.time) - cm };
     }
-    // After Isha: next is tomorrow Fajr
-    const fajrMin = timeToMinutes(salats[0].time);
-    return { prayer: salats[0], diffMin: 24*60 - cm + fajrMin };
+    return { name: salats[0].name, diff: 24*60 - cm + toMin(salats[0].time) };
 }
 
-// ── RENDER CARDS ──
-function renderCards() {
+function fmtDiff(min) {
+    const h = Math.floor(min/60), m = min%60;
+    return h > 0 ? `in ${h}h ${m}m` : `in ${m}m`;
+}
+
+// ── BUILD CARDS ONCE on page load ──
+let lastCurrent = null;
+
+function buildCards() {
     const grid = document.getElementById('prayer-grid');
     const current = getCurrentPrayer();
-    grid.innerHTML = '';
-    prayerData.forEach(p => {
+    lastCurrent = current;
+
+    prayerData.forEach((p, i) => {
         const card = document.createElement('div');
-        card.className = 'prayer-card' +
-            (p.name === current ? ' current' : '') +
+        const isCurrent = p.name === current;
+        card.id = 'card-' + p.name;
+        card.className = 'prayer-card animate-in' +
+            (isCurrent ? ' current' : '') +
             (p.name === 'Sunrise' ? ' sunrise-card' : '');
+        card.style.animationDelay = `${i * 0.08}s`;
 
         card.innerHTML = `
             <div class="prayer-icon">${p.icon}</div>
             <div class="prayer-name">${p.name}</div>
             <div class="prayer-time">${p.time}</div>
-            ${p.name === current ? '<div class="current-badge">Now</div>' : ''}
+            <div class="current-badge" id="badge-${p.name}" style="display:${isCurrent ? 'block' : 'none'}">Now</div>
         `;
         grid.appendChild(card);
     });
+
+    // Remove animation class after it plays so re-toggling current doesn't re-animate
+    setTimeout(() => {
+        document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('animate-in'));
+    }, 1500);
 }
 
-// ── LIVE CLOCK ──
+// ── UPDATE current highlight — no DOM rebuild ──
+function updateCurrentHighlight() {
+    const current = getCurrentPrayer();
+    if (current === lastCurrent) return; // nothing changed, skip
+    lastCurrent = current;
+
+    prayerData.forEach(p => {
+        const card  = document.getElementById('card-' + p.name);
+        const badge = document.getElementById('badge-' + p.name);
+        if (!card) return;
+        const isCur = p.name === current;
+        card.classList.toggle('current', isCur);
+        badge.style.display = isCur ? 'block' : 'none';
+    });
+}
+
+// ── CLOCK + BANNER ──
 function updateClock() {
     const now = new Date();
-    const timeEl = document.getElementById('clock-time');
-    const dateEl = document.getElementById('clock-date');
-    const dayEl  = document.getElementById('clock-day');
+    const hh  = String(now.getHours()).padStart(2,'0');
+    const mm  = String(now.getMinutes()).padStart(2,'0');
+    const ss  = String(now.getSeconds()).padStart(2,'0');
 
-    // Time
-    const hh = String(now.getHours()).padStart(2,'0');
-    const mm = String(now.getMinutes()).padStart(2,'0');
-    const ss = String(now.getSeconds()).padStart(2,'0');
-    timeEl.textContent = `${hh}:${mm}:${ss}`;
-
-    // Date
-    const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const months = ['January','February','March','April','May','June',
-                    'July','August','September','October','November','December'];
-    dateEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-    dayEl.textContent  = now.getDay() === 5 ? '✦ Jumu\'ah Mubarak ✦' : '';
+    document.getElementById('clock-time').textContent = `${hh}:${mm}:${ss}`;
+    document.getElementById('clock-date').textContent = `${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+    document.getElementById('clock-day').textContent  = now.getDay() === 5 ? "✦ Jumu'ah Mubarak ✦" : '';
 }
 
-// ── NEXT PRAYER ──
-function updateNextPrayer() {
-    const { prayer, diffMin } = getNextPrayer();
-    document.getElementById('next-name').textContent      = prayer.name;
-    document.getElementById('next-countdown').textContent = formatCountdown(diffMin);
+function updateBanner() {
+    const { name, diff } = getNextPrayer();
+    document.getElementById('next-name').textContent      = name;
+    document.getElementById('next-countdown').textContent = fmtDiff(diff);
 }
 
-// ── TICK ──
+// ── TICK every second ──
 function tick() {
     updateClock();
-    updateNextPrayer();
-    //renderCards(); // re-render to update current badge
+    updateBanner();
+    updateCurrentHighlight(); // only changes DOM if prayer switched
+}
+
+// ── AYAH ROTATOR ──
+let ayahIdx = 0;
+
+function showAyah(idx) {
+    const a  = document.getElementById('ayah-arabic');
+    const t  = document.getElementById('ayah-translation');
+    const r  = document.getElementById('ayah-ref');
+    const ay = ayahs[idx % ayahs.length];
+
+    [a, t, r].forEach(el => el.classList.remove('vis'));
+    setTimeout(() => {
+        a.textContent = ay.arabic;
+        t.textContent = ay.translation;
+        r.textContent = '— ' + ay.ref;
+        [a, t, r].forEach(el => el.classList.add('vis'));
+    }, 700);
 }
 
 // ── INIT ──
-renderCards();
+buildCards();
 tick();
+showAyah(0);
+
 setInterval(tick, 1000);
+setInterval(() => showAyah(++ayahIdx), 30000);
 </script>
 </body>
 </html>
